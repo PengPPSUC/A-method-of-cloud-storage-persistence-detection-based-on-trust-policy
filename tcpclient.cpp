@@ -115,19 +115,11 @@ void permutation(int n,int *z_arry)
 	return;
 }
 
-void readTxt(string file)
+
+
+string readText(string readLine,string filePath)
 {
-	ifstream infile;
-	infile.open(file.data());
-	assert(infile.is_open());
-
-	char c;
-	infile>>noskipws;
-	while (!infile.eof())
-	{
-		infile>>c;
-		cout<<c<<endl;
-	}
-	infile.close();
-
+	ifstream ifs(filePath);
+	getline(ifs,readLine);
+	return readLine;
 }
