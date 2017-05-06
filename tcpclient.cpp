@@ -53,6 +53,14 @@ void main()
 
 	getchar();
 	*/
+
+	SOCKET sockClient= socket(AF_INET,SOCK_DGRAM,0);//åˆ›å»ºå¥—æŽ¥å­—
+	SOCKADDR_IN addrSrv;
+	addrSrv.sin_addr.S_un.S_addr =inet_addr("127.0.0.1");
+	addrSrv.sin_family=AF_INET;
+	addrSrv.sin_port=htons(6000);
+	char *FileRead(const char *textPath,char *textBuff);
+	string int_to_String(int n);
 	CMD5 md5;
 	void permutation(int n,int *z_arry);
 	int TheNumOfTheBlock=30;
@@ -62,12 +70,6 @@ void main()
 	{
 		printf("%d,",InitialSequence[i]);
 	}
-	SOCKET sockClient= socket(AF_INET,SOCK_DGRAM,0);//´´½¨Ì×½Ó×Ö
-	SOCKADDR_IN addrSrv;
-	addrSrv.sin_addr.S_un.S_addr =inet_addr("127.0.0.1");
-	addrSrv.sin_family=AF_INET;
-	addrSrv.sin_port=htons(6000);
-
 	char recvBuf[100];
 	char sendBuf[100];
 	char tempBuf[100];
@@ -117,9 +119,31 @@ void permutation(int n,int *z_arry)
 
 
 
-string readText(string readLine,string filePath)
+char *FileRead(const char *textPath,char *textBuff)
 {
-	ifstream ifs(filePath);
-	getline(ifs,readLine);
-	return readLine;
+	FILE *pFile;
+	if (NULL==(pFile=fopen(textPath,"r")))
+	{
+		printf("Error,can't open file!");
+	} 
+	else
+	{
+		fseek(pFile,0,SEEK_END);
+		int len=ftell(pFile);
+		//printf("the text's len is :%d \n",len);
+		textBuff=new char[len+1];
+		rewind(pFile);
+		fread(textBuff,1,len,pFile);
+		textBuff[len]=0;
+		fclose(pFile);
+	}
+	return textBuff;
 }
+
+string int_to_String(int n)
+{
+	string fileName="";
+	fileName+=to_string((long double)n);
+
+	return fileName;
+} 
