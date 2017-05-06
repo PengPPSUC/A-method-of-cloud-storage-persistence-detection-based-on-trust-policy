@@ -54,7 +54,7 @@ void main()
 
 	SOCKADDR_IN addrClient;
 	int len = sizeof(SOCKADDR);
-	char recvBuf[100];
+	char recvBuf[20];
 	char sendBuf[100];
 	char tempBuf[100];
 	char *tempTextBuff="";
@@ -76,15 +76,15 @@ void main()
 	//printf("The text's md5 is : %s\n",md5.getMD5Digest());
 	while (1)
 	{
-		recvfrom(sockSrv,recvBuf,100,0,(SOCKADDR*)&addrClient,&len);
+		recvfrom(sockSrv,recvBuf,sizeof(recvBuf)+1,0,(SOCKADDR*)&addrClient,&len);
 		if('q'==recvBuf[0])
 		{
 			sendto(sockSrv,"q",strlen("q")+1,0,(SOCKADDR*)&addrClient,len);
 			printf("Chat end!\n");
 			break;
 		}
-		sprintf(tempBuf,"%s say : %s",inet_ntoa(addrClient.sin_addr),recvBuf);
-		printf("%s\n",tempBuf);
+		//sprintf(tempBuf,"%s say : %s",inet_ntoa(addrClient.sin_addr),recvBuf);
+		printf("client say: %d\n",recvBuf[9]);
 		printf("Please input data:\n");
 		gets(sendBuf);
 		md5.setPlainText(sendBuf);
