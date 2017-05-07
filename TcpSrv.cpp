@@ -54,22 +54,18 @@ void main()
 
 	SOCKADDR_IN addrClient;
 	int len = sizeof(SOCKADDR);
-	char recvBuf[20];
+	char recvBuf[50];
 	char sendBuf[100];
 	char tempBuf[100];
 	char *tempTextBuff="";
 	char *textBuff="";
-	string fileMainPath = "C:/Users/Hasee/Desktop/";
-	int textBloclNum=1;
+	std::string combined;
+	std::stringstream ss;
+	string fileMainPath = "C:/Users/Hasee/Desktop/test/";
+	int textBloclNum=0;
 	string textName="";
-	textName=int_to_String(textBloclNum);
-	//printf("%s\n",textName.c_str());
 	string textform=".txt";
-	string TrueTextPath=fileMainPath+textName+textform;
-	const char *textPath=TrueTextPath.c_str();
-	printf("The path is %s \n",textPath);
-	textBuff=FileRead(TrueTextPath.c_str(),tempTextBuff);
-	printf("the text is :%s.\n",textBuff);
+	/*const char *textPath=TrueTextPath.c_str();*/
 	//printf("The text is:%s\n",readLineTemp);
 	//const char *readLineChar =readLine.c_str();
 	//md5.setPlainText(readLineChar);
@@ -84,11 +80,43 @@ void main()
 			break;
 		}
 		//sprintf(tempBuf,"%s say : %s",inet_ntoa(addrClient.sin_addr),recvBuf);
-		printf("client say: %d\n",recvBuf[9]);
-		printf("Please input data:\n");
+		printf("The challence message is:");
+		for (int i=0;i<sizeof(recvBuf);i++)
+		{
+			if (recvBuf[i]==127)
+			{
+				combined=ss.str();
+				printf("the text is:%s,",combined.c_str());
+				md5.setPlainText(combined.c_str());
+				sendto(sockSrv,md5.getMD5Digest(),strlen(md5.getMD5Digest())+1,0,(SOCKADDR*)&addrClient,len);
+				ss.str("");
+				break;
+			}
+			else
+			{
+				if (recvBuf[i]!=100)
+				{
+					textBloclNum=(int)recvBuf[i];
+					textName=int_to_String(textBloclNum);
+					string TrueTextPath=fileMainPath+textName+textform;
+					printf("the text path is :%s\n",TrueTextPath.c_str());
+					textBuff=FileRead(TrueTextPath.c_str(),tempTextBuff);
+					ss<<textBuff;
+				}
+				else
+				{
+					combined=ss.str();
+					printf("the text is:%s,",combined.c_str());
+					md5.setPlainText(combined.c_str());
+					sendto(sockSrv,md5.getMD5Digest(),strlen(md5.getMD5Digest())+1,0,(SOCKADDR*)&addrClient,len);
+					ss.str("");
+				}
+				printf("\n");
+			}
+		}
+		//printf("\nPlease input data:\n");
 		gets(sendBuf);
-		md5.setPlainText(sendBuf);
-		sendto(sockSrv,md5.getMD5Digest(),strlen(md5.getMD5Digest())+1,0,(SOCKADDR*)&addrClient,len);
+
 	}
 	closesocket(sockSrv);
 	WSACleanup();
