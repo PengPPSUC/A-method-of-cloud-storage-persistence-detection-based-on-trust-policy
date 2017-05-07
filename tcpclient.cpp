@@ -24,7 +24,6 @@ void main()
 	}
 	if ( LOBYTE( wsaData.wVersion ) != 2 ||
 		HIBYTE( wsaData.wVersion ) != 2 ) {
-
 			WSACleanup( );
 			return; 
 	}
@@ -39,7 +38,7 @@ void main()
 	void permutation(int n,int *z_arry,char *sendBuffer);
 	void GenerrateTheChallengeSequenceNum(int *InitialSequence,int TheTotalNumOfBlocl,int TheMaxMixNum,int *TheChallengeSequence);
 	char recvBuf[100];
-	char sendBuf[20];
+	char sendBuf[50];
 	char tempBuf[100];
 	int TheTotalNumOfBlocl=20;
 	int InitialSequence[20];
@@ -49,17 +48,20 @@ void main()
 	GenerrateTheChallengeSequenceNum(InitialSequence,TheTotalNumOfBlocl,4,TheChallengeSequence);
 	for (int i=0;i<sizeof(TheChallengeSequence);i++)
 		{
-			if (TheChallengeSequence[i]==999)
+			if (TheChallengeSequence[i]==127)
 			{
+				printf("%d,",TheChallengeSequence[i]);
+				sendBuf[i]=TheChallengeSequence[i];
 				break;
 			}
 			else
 			{
 				printf("%d,",TheChallengeSequence[i]);
+				sendBuf[i]=TheChallengeSequence[i];
 			}
 			
 		}
-		//printf("%d,%d,%d",sendBuf[9],strlen(sendBuf),sizeof(sendBuf));
+	printf("\n");
 	string theTXTmessage[100];
 	int len = sizeof(SOCKADDR);
 	while (1)
@@ -68,6 +70,11 @@ void main()
 		//gets(sendBuf);
 		sendto(sockClient,sendBuf,sizeof(sendBuf)+1,0,(SOCKADDR*)&addrSrv,len);
 		recvfrom(sockClient,recvBuf,100,0,(SOCKADDR*)&addrSrv,&len);
+		for (int i=0;i<33;i++)
+		{
+			printf("%c",recvBuf[i]);
+		}
+		printf("\n");
 		if ('q'==recvBuf[0])
 		{
 			sendto(sockClient,"q",strlen("q")+1,0,(SOCKADDR*)&addrSrv,len);
@@ -80,7 +87,6 @@ void main()
 	closesocket(sockClient);
 	WSACleanup();
 }
-
 void permutation(int n,int *z_arry,char *sendBuffer)
 {
 	int i,j,k,z;
@@ -153,8 +159,7 @@ void GenerrateTheChallengeSequenceNum(int *InitialSequence,int TheTotalNumOfBloc
 				TheChallengeSequence[TheRemainNum+j]=InitialSequence[TheRemainNum];
 
 			}
-			TheChallengeSequence[TheTotalNumOfBlocl+j]=999;
-			/*printf("2,");*/
+			TheChallengeSequence[TheTotalNumOfBlocl+j]=127;
 			break;
 		}
 		else
@@ -166,7 +171,6 @@ void GenerrateTheChallengeSequenceNum(int *InitialSequence,int TheTotalNumOfBloc
 			TheChallengeSequence[TheRemainNum+j]=100;
 			i=TheRemainNum;
 			j++;
-			/*printf("1,");*/
 		}
 
 	}
