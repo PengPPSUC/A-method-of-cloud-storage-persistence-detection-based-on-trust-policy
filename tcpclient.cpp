@@ -37,19 +37,33 @@ void main()
 	string int_to_String(int n);
 	CMD5 md5;
 	void permutation(int n,int *z_arry,char *sendBuffer);
+	void GenerrateTheChallengeSequenceNum(int *InitialSequence,int TheTotalNumOfBlocl,int TheMaxMixNum,int *TheChallengeSequence);
 	char recvBuf[100];
 	char sendBuf[20];
 	char tempBuf[100];
 	int TheTotalNumOfBlocl=20;
 	int InitialSequence[20];
+	int TheChallengeSequence[50];
 	int TheCurrentSequenceNum=0;
 	permutation(TheTotalNumOfBlocl,InitialSequence,sendBuf);
-	printf("%d,%d,%d",sendBuf[9],strlen(sendBuf),sizeof(sendBuf));
+	GenerrateTheChallengeSequenceNum(InitialSequence,TheTotalNumOfBlocl,4,TheChallengeSequence);
+	for (int i=0;i<sizeof(TheChallengeSequence);i++)
+		{
+			if (TheChallengeSequence[i]==999)
+			{
+				break;
+			}
+			else
+			{
+				printf("%d,",TheChallengeSequence[i]);
+			}
+			
+		}
+		//printf("%d,%d,%d",sendBuf[9],strlen(sendBuf),sizeof(sendBuf));
 	string theTXTmessage[100];
 	int len = sizeof(SOCKADDR);
 	while (1)
 	{
-		TheCurrentSequenceNum=TheCurrentSequenceNum+rand()%4;
 		//printf("Please input data:\n");
 		//gets(sendBuf);
 		sendto(sockClient,sendBuf,sizeof(sendBuf)+1,0,(SOCKADDR*)&addrSrv,len);
@@ -114,4 +128,47 @@ string int_to_String(int n)
 	string fileName="";
 	fileName+=to_string((long double)n);
 	return fileName;
+}
+
+void GenerrateTheChallengeSequenceNum(int *InitialSequence,int TheTotalNumOfBlocl,int TheMaxMixNum,int *TheChallengeSequence)
+{
+	int TheRemainNum=0;
+	int i=0;
+	int j=0;
+	
+	while (1)
+	{
+		TheRemainNum=TheRemainNum+(1+rand()%(TheMaxMixNum));
+		if (TheRemainNum>=(TheTotalNumOfBlocl-TheMaxMixNum))
+		{
+			for (i;i<TheRemainNum;i++)
+			{
+				TheChallengeSequence[i+j]=InitialSequence[i];
+			}
+			TheChallengeSequence[TheRemainNum+j]=100;
+			i=TheRemainNum;
+			j++;
+			for (TheRemainNum;TheRemainNum<TheTotalNumOfBlocl;TheRemainNum++)
+			{
+				TheChallengeSequence[TheRemainNum+j]=InitialSequence[TheRemainNum];
+
+			}
+			TheChallengeSequence[TheTotalNumOfBlocl+j]=999;
+			/*printf("2,");*/
+			break;
+		}
+		else
+		{
+			for (i;i<TheRemainNum;i++)
+			{
+				TheChallengeSequence[i+j]=InitialSequence[i];
+			}
+			TheChallengeSequence[TheRemainNum+j]=100;
+			i=TheRemainNum;
+			j++;
+			/*printf("1,");*/
+		}
+
+	}
+
 }
